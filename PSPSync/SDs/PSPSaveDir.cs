@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -109,13 +103,11 @@ namespace PSPSync
             foreach (NamedStream stm in files) {
                 FileStream a = File.Create(dr + "/" + stm.name);
                 long rem = stm.stream.Length;
-                int offset = 0;
-                byte[] read = new byte[1000000];
+                byte[] buffer = new byte[1000000];
                 while (rem > 0) {
-                    stm.stream.Read(read, offset, (int)Math.Min(rem, 1000000));
-                    a.Write(read, offset, (int)Math.Min(rem, 1000000));
-                    rem -= Math.Min(rem, 1000000);
-                    offset += 1000000;
+                    var bytesRead = stm.stream.Read(buffer, 0, buffer.Length);
+                    a.Write(buffer, 0, bytesRead);
+                    rem -= bytesRead;
                 }
                 a.Close();
             }
